@@ -71,14 +71,15 @@ socket.on("WaitingGame", () => {
 });
 
 //current move status of player in game
-socket.on("gameStatus", ({ myMoves, myOpponentMoves, symbol, opponentSymbol }) => {
+socket.on("gameStatus", ({ playerMoves, playerOpponentMoves, symbol, opponentSymbol }) => {
 	let str = "";
-	myMoves.map((move, index) => {
+	playerMoves.map((move, index) => {
+		// console.log("move:::", move, "index::::", index);
 		const position = index + 1;
 		if (move === true) {
 			str = str + chalk.bgMagenta(symbol) + " ";
 			if (index === 2 || index === 5) str = str + "\n";
-		} else if (myOpponentMoves[index] === true) {
+		} else if (playerOpponentMoves[index] === true) {
 			str = str + chalk.bgCyan(opponentSymbol) + " ";
 			if (index === 2 || index === 5) str = str + "\n";
 		} else {
