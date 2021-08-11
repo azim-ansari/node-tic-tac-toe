@@ -1,17 +1,20 @@
 require("dotenv").config();
-let port = process.env.port || 5000;
+const port = process.env.port || 5000;
+// console.log("port:::", port);
 const socket = require("socket.io-client")(`http://localhost:${port}`);
+// console.log("socket:::", socket);
 const chalk = require("chalk");
 const repl = require("repl");
 // console.log("socket:::", socket);
-let latestPlayer = null;
+let current_player = null;
 
 //when new User Connected
 socket.on("connect", () => {
 	process.argv[2]
-		? console.log(chalk.green.bold(`**********Welcome To Game********** ${process.argv[2]}====`))
+		? console.log(chalk.green.bold(`**********Welcome To Game********** ${process.argv[2]}===`))
 		: console.log(chalk.green.bold(`**********Welcome To Game**********`));
-	username = process.argv[2];
+	// console.log("username:::", process.argv[0]);
+	let username = process.argv[2];
 });
 
 //when new User DisConnected
@@ -21,7 +24,7 @@ socket.on("disconnect", () => {
 
 //WaitingForJoining
 socket.on("WaitingForJoining", () => {
-	console.log(chalk.yellow("Wait !! opponent is joining..........."));
+	console.log(chalk.yellow("Wait !! opponent is joining............."));
 });
 
 //two players are paired. shwoing message to start the game
@@ -29,10 +32,8 @@ socket.on("StartGame", ({ symbol, player }) => {
 	symbol === "X"
 		? console.log(chalk.yellowBright("Game Started. You are Player " + player))
 		: console.log(chalk.yellowBright("Game Started. You are Player " + player));
-	latestPlayer = player;
-	console.log(
-		chalk.bgMagenta("General Description : The Tic-Tac-Toe board is numbered like this :")
-	);
+	current_player = player;
+	console.log(chalk.inverse("................Game Borad............."));
 	console.log(chalk.green.bold.inverse("---------------------------------------"));
 	console.log(chalk.green.bold.inverse("|                 1  2  3             |"));
 	console.log(chalk.green.bold.inverse("|                 4  5  6             |"));
@@ -103,35 +104,35 @@ socket.on("GameWrongMove", msg => {
 
 //Game won message
 socket.on("GameWon", ({ player }) => {
-	console.log(chalk.green("Player " + player + " Winner ."));
+	console.log(chalk.green(`Player ${player}  Winner .`));
 });
 
 //message when oppenent left the game
 socket.on("GameOpponentLeft", () => {
 	console.log(
-		chalk.green("Winner !! You have won the match, Your opponent has resigned the game.")
+		chalk.green(`Winner !! you have won the match, Your opponent has resigned the game.`)
 	);
 });
 
 //self left the game result showing
 socket.on("GameLeft", () => {
-	console.log(chalk.red("You lost the Game, Your have resigned the game."));
+	console.log(chalk.red(`You lost the Game, Your have resigned the game.`));
 });
 
 //when anyone player left during the game move showing message
 socket.on("GameOpponentLeftBetween", () => {
-	console.log(chalk.green("You won the game. Your opponent has left the game !"));
+	console.log(chalk.green(`You won the game. Your opponent has left the game !`));
 });
 
 //showing message when Game is draw
 socket.on("GameDraw", () => {
-	console.log(chalk.green("Match Draw !"));
+	console.log(chalk.green(`Match Draw !`));
 });
 
 //Whenever users enters something in command line it send to the socket server with message event.
 repl.start({
 	prompt: "",
 	eval: cmd => {
-		socket.send({ cmd, player: latestPlayer });
+		socket.send({ cmd, player: current_player });
 	},
 });

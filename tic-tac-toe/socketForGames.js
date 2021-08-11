@@ -49,7 +49,7 @@ module.exports = {
 			//when user enters any Number in command line then Emit events
 			socket.on("message", cmd => {
 				//To know whether it is chance of the player who is trying to play
-				turn = playerTurn(socket);
+				let turn = playerTurn(socket);
 				//To check whether the game is not over yet
 				if (!gameOver(socket)) {
 					//Wrong player move
