@@ -24,7 +24,6 @@ module.exports = {
 		}
 	},
 	joinOppenent: socket => {
-		// console.log("socket::", socket);
 		if (!players[socket.id].opponent) {
 			return;
 		} else {
@@ -32,7 +31,6 @@ module.exports = {
 		}
 	},
 	playerSymbol: socket => {
-		//Send player symbol
 		return players[socket.id].symbol;
 	},
 	playerSocket: id => {
@@ -125,10 +123,8 @@ module.exports = {
 	gameOver: socket => {
 		if (players[players[socket.id].opponent].win === true || players[socket.id].win === true)
 			return true;
-
 		if (players[players[socket.id].opponent].draw === true || players[socket.id].draw === true)
 			return true;
-
 		if (players[players[socket.id].opponent].left === true || players[socket.id].left === true)
 			return true;
 		else return false;

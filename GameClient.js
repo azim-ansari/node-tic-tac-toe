@@ -4,7 +4,7 @@ const socket = require("socket.io-client")(`http://localhost:${port}`);
 const chalk = require("chalk");
 const repl = require("repl");
 // console.log("socket:::", socket);
-let current_player = null;
+let latestPlayer = null;
 
 //when new User Connected
 socket.on("connect", () => {
@@ -21,23 +21,26 @@ socket.on("disconnect", () => {
 
 //WaitingForJoining
 socket.on("WaitingForJoining", () => {
-	console.log("opponent joining...........");
+	console.log(chalk.yellow("Wait !! opponent is joining..........."));
 });
 
 //two players are paired. shwoing message to start the game
 socket.on("StartGame", ({ symbol, player }) => {
 	symbol === "X"
-		? console.log("Game Started. You are Player " + player)
-		: console.log("Game Started. You are Player " + player);
-	current_player = player;
-	console.log(chalk.green("General Description"));
-	console.log("The Tic-Tac-Toe board is numbered like this :");
-	console.log(chalk.green(" 1  2  3"));
-	console.log(chalk.green(" 4  5  6"));
-	console.log(chalk.green(" 7  8  9"));
+		? console.log(chalk.yellowBright("Game Started. You are Player " + player))
+		: console.log(chalk.yellowBright("Game Started. You are Player " + player));
+	latestPlayer = player;
+	console.log(
+		chalk.bgMagenta("General Description : The Tic-Tac-Toe board is numbered like this :")
+	);
+	console.log(chalk.green.bold.inverse("---------------------------------------"));
+	console.log(chalk.green.bold.inverse("|                 1  2  3             |"));
+	console.log(chalk.green.bold.inverse("|                 4  5  6             |"));
+	console.log(chalk.green.bold.inverse("|                 7  8  9             |"));
+	console.log(chalk.green.bold.inverse("---------------------------------------"));
 	symbol === "X"
-		? console.log(chalk.blue(" Its Your Turn. Please enter your position to move !"))
-		: console.log(chalk.blue("Your Opponent Turn. Please wait untill he plays the move !"));
+		? console.log(chalk.yellow("Press number to move, This is your turn"))
+		: console.log(chalk.blue("Wait untill Player 1 don't move, This is your opponent turn"));
 });
 
 //When Game is over.
@@ -56,9 +59,9 @@ socket.on("GameMove", data => {
 	else {
 		console.log(
 			chalk.blue(
-				"Player " +
+				"Now its your turn to play. Player " +
 					player +
-					" has played his move, Now its your turn to play. Your symbol is " +
+					" has played his move, Your symbol is " +
 					symbol
 			)
 		);
@@ -67,7 +70,7 @@ socket.on("GameMove", data => {
 
 //waiting for oppenent move
 socket.on("WaitingGame", () => {
-	console.log(chalk.blue("Waiting for opponent to play .........."));
+	console.log(chalk.yellow("Waiting for opponent to play .........."));
 });
 
 //current move status of player in game
@@ -77,10 +80,10 @@ socket.on("gameStatus", ({ playerMoves, playerOpponentMoves, symbol, opponentSym
 		// console.log("move:::", move, "index::::", index);
 		const position = index + 1;
 		if (move === true) {
-			str = str + chalk.bgMagenta(symbol) + " ";
+			str = str + chalk.blueBright(symbol) + " ";
 			if (index === 2 || index === 5) str = str + "\n";
 		} else if (playerOpponentMoves[index] === true) {
-			str = str + chalk.bgCyan(opponentSymbol) + " ";
+			str = str + chalk.gray(opponentSymbol) + " ";
 			if (index === 2 || index === 5) str = str + "\n";
 		} else {
 			str = str + position + " ";
@@ -88,11 +91,9 @@ socket.on("gameStatus", ({ playerMoves, playerOpponentMoves, symbol, opponentSym
 		}
 	});
 
-	console.log(chalk.yellow("**************************"));
-
-	console.log(str);
-
-	console.log(chalk.yellow("**************************"));
+	console.log(chalk.underline.bold.green("---------------------------------------"));
+	console.log(chalk.green.bold.inverse(str));
+	console.log(chalk.green.underline.bold("---------------------------------------"));
 });
 
 //when players moves wrong move displaying.
@@ -102,12 +103,14 @@ socket.on("GameWrongMove", msg => {
 
 //Game won message
 socket.on("GameWon", ({ player }) => {
-	console.log(chalk.green("Player " + player + " has won the Game"));
+	console.log(chalk.green("Player " + player + " Winner ."));
 });
 
 //message when oppenent left the game
 socket.on("GameOpponentLeft", () => {
-	console.log(chalk.green("You won the Game, Your opponent has resigned the game."));
+	console.log(
+		chalk.green("Winner !! You have won the match, Your opponent has resigned the game.")
+	);
 });
 
 //self left the game result showing
@@ -129,6 +132,6 @@ socket.on("GameDraw", () => {
 repl.start({
 	prompt: "",
 	eval: cmd => {
-		socket.send({ cmd, player: current_player });
+		socket.send({ cmd, player: latestPlayer });
 	},
 });
