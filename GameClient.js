@@ -1,12 +1,11 @@
-require("dotenv").config();
+import chalk from "chalk";
+import repl from "repl";
+import dotenv from "dotenv";
+dotenv.config();
 const port = process.env.port || 5000;
-// console.log("port:::", port);
 const socket = require("socket.io-client")(`http://localhost:${port}`);
-// console.log("socket:::", socket);
-const chalk = require("chalk");
-const repl = require("repl");
-// console.log("socket:::", socket);
-let current_player = null;
+
+let latest_player = null;
 
 //when new User Connected
 socket.on("connect", () => {
@@ -32,7 +31,7 @@ socket.on("StartGame", ({ symbol, player }) => {
 	symbol === "X"
 		? console.log(chalk.yellowBright("Game Started. You are Player " + player))
 		: console.log(chalk.yellowBright("Game Started. You are Player " + player));
-	current_player = player;
+	latest_player = player;
 	console.log(chalk.inverse("................Game Borad............."));
 	console.log(chalk.green.bold.inverse("---------------------------------------"));
 	console.log(chalk.green.bold.inverse("|                 1  2  3             |"));
@@ -133,6 +132,6 @@ socket.on("GameDraw", () => {
 repl.start({
 	prompt: "",
 	eval: cmd => {
-		socket.send({ cmd, player: current_player });
+		socket.send({ cmd, player: latest_player });
 	},
 });

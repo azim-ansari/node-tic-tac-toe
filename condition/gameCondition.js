@@ -54,14 +54,18 @@ module.exports = {
 		return { playerMoves, playerOpponentMoves, symbol, opponentSymbol };
 	},
 	checkValidMove: (socket, move) => {
-		if (move > 9 || move < 1) return { status: true, msg: "Please Enter the move between 1 - 9 " };
-		else if (
+		if (move > 9 || move < 1) {
+			return { status: true, msg: "Please Enter the move between 1 - 9 " };
+		} else if (
 			players[socket.id].playerMoves[move - 1] === true ||
 			players[socket.id].playerOpponentMoves[move - 1] === true
-		)
+		) {
 			return { status: true, msg: "This move is already played. Please play another move. " };
-		else if (move <= 9 && move >= 1) return { status: false, msg: "Valid move" };
-		else return { status: true, msg: "Please Enter the move between 1 - 9 " };
+		} else if (move <= 9 && move >= 1) {
+			return { status: false, msg: "Valid move" };
+		} else {
+			return { status: true, msg: "Please Enter the move between 1 - 9 " };
+		}
 	},
 	hasResigned: (socket, move) => {
 		if (move === "r") {
@@ -103,7 +107,9 @@ module.exports = {
 		} else if (x3 === true && y2 === true && z1 === true) {
 			players[socket.id].win = true;
 			return true;
-		} else return false;
+		} else {
+			return false;
+		}
 	},
 	matchDraw: socket => {
 		const { playerMoves, playerOpponentMoves } = players[socket.id];
@@ -121,12 +127,16 @@ module.exports = {
 		players[players[socket.id].opponent].win = true;
 	},
 	gameOver: socket => {
-		if (players[players[socket.id].opponent].win === true || players[socket.id].win === true)
+		if (players[players[socket.id].opponent].win === true || players[socket.id].win === true) {
 			return true;
-		if (players[players[socket.id].opponent].draw === true || players[socket.id].draw === true)
+		}
+		if (players[players[socket.id].opponent].draw === true || players[socket.id].draw === true) {
 			return true;
-		if (players[players[socket.id].opponent].left === true || players[socket.id].left === true)
+		}
+		if (players[players[socket.id].opponent].left === true || players[socket.id].left === true) {
 			return true;
-		else return false;
+		} else {
+			return false;
+		}
 	},
 };

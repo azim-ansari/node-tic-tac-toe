@@ -1,5 +1,5 @@
-const socketIO = require("socket.io");
-const {
+import socketIO from "socket.io";
+import {
 	joinGame,
 	playerSymbol,
 	joinOppenent,
@@ -13,7 +13,7 @@ const {
 	matchDraw,
 	makeWinner,
 	gameOver,
-} = require("../condition/gameCondition");
+} from "../condition/gameCondition";
 module.exports = {
 	connectSocketToGame: socketToserver => {
 		// console.log("Azim");
