@@ -13,7 +13,7 @@ import {
 	matchDraw,
 	makeWinner,
 	gameOver,
-} from "../condition/gameCondition";
+} from "./condition/gameCondition";
 module.exports = {
 	connectSocketToGame: socketToserver => {
 		// console.log("Azim");

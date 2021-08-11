@@ -55,22 +55,22 @@ module.exports = {
 	},
 	checkValidMove: (socket, move) => {
 		if (move > 9 || move < 1) {
-			return { status: true, msg: "Please Enter the move between 1 - 9 " };
+			return { status: true, msg: "Select any number between 1-9 " };
 		} else if (
 			players[socket.id].playerMoves[move - 1] === true ||
 			players[socket.id].playerOpponentMoves[move - 1] === true
 		) {
-			return { status: true, msg: "This move is already played. Please play another move. " };
+			return { status: true, msg: "You have already played, please select another number" };
 		} else if (move <= 9 && move >= 1) {
 			return { status: false, msg: "Valid move" };
 		} else {
-			return { status: true, msg: "Please Enter the move between 1 - 9 " };
+			return { status: true, msg: "Please Enter number between 1 - 9 " };
 		}
 	},
 	hasResigned: (socket, move) => {
 		if (move === "r") {
 			players[players[socket.id].opponent].win = true;
-			return { status: true, msg: "Opponent has resigned the game. You win !" };
+			return { status: true, msg: "Opponent has Left the game. You win !" };
 		}
 	},
 	winningMove: socket => {
