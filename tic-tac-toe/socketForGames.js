@@ -32,19 +32,19 @@ module.exports = {
 				const player_symbol = playerSymbol(socket); //Player 2
 				const opponent_symbol = playerSymbol(opponent_connection); //Player 1
 				//Emit the event to start Player 2 game
-				socket.emit("StartGame", {
+				socket.emit("startGame", {
 					symbol: player_symbol,
 					player: 2,
 				});
 				//Emit the event to start Player 1 game for opponent connection
-				opponent_connection.emit("StartGame", {
+				opponent_connection.emit("startGame", {
 					symbol: opponent_symbol,
 					player: 1,
 				});
 			}
 			//No opponent has joined the game
 			else {
-				socket.emit("WaitingForJoining");
+				socket.emit("waitingForJoining");
 			}
 			//when user enters any Number in command line then Emit events
 			socket.on("message", cmd => {
@@ -53,7 +53,9 @@ module.exports = {
 				//To check whether the game is not over yet
 				if (!gameOver(socket)) {
 					//Wrong player move
-					if (!turn) socket.emit("GameMove", { ...cmd, turn });
+					if (!turn) {
+						socket.emit("gameMove", { ...cmd, turn });
+					}
 					//Right player move
 					else {
 						const opponent_socket = joinOppenent(socket);
@@ -73,44 +75,44 @@ module.exports = {
 									opponent_socket.emit("gameStatus", playerDetails(opponent_socket));
 									const symbol = playerSymbol(opponent_socket);
 									//Display message to both the users letting them know who have the next turn
-									opponent_socket.emit("GameMove", { ...cmd, turn, symbol });
-									socket.emit("WaitingGame");
+									opponent_socket.emit("gameMove", { ...cmd, turn, symbol });
+									socket.emit("waitingGame");
 									//Change Turn of the player
 									changeTurn(socket);
 								} else {
-									socket.emit("GameStatus", playerDetails(socket));
-									opponent_socket.emit("GameStatus", playerDetails(opponent_socket));
-									socket.emit("GameDraw");
-									opponent_socket.emit("GameDraw");
+									socket.emit("gameStatus", playerDetails(socket));
+									opponent_socket.emit("gameStatus", playerDetails(opponent_socket));
+									socket.emit("gameDraw");
+									opponent_socket.emit("gameDraw");
 								}
 							} else {
-								socket.emit("GameStatus", playerDetails(socket));
-								opponent_socket.emit("GameStatus", playerDetails(opponent_socket));
-								socket.emit("GameWon", cmd);
-								opponent_socket.emit("GameWon", cmd);
+								socket.emit("gameStatus", playerDetails(socket));
+								opponent_socket.emit("gameStatus", playerDetails(opponent_socket));
+								socket.emit("gameWon", cmd);
+								opponent_socket.emit("gameWon", cmd);
 							}
 						}
 						//If user has not played valid move i.e 1-9
 						else {
 							//Check whether player has entered r key to resign
 							if (hasResigned(socket, move[0])) {
-								socket.emit("GameLeft");
-								opponent_socket.emit("GameOpponentLeft");
+								socket.emit("gameLeft");
+								opponent_socket.emit("gameOpponentLeft");
 							} else {
-								socket.emit("GameWrongMove", msg);
+								socket.emit("gameWrongMove", msg);
 							}
 						}
 					}
 				}
 				//Game Over
 				else {
-					socket.emit("GameOvar");
+					socket.emit("gameOvar");
 				}
 			});
 			//When users disconnects
 			socket.on("disconnect", () => {
 				const opponent_socket = joinOppenent(socket);
-				opponent_socket.emit("GameOpponentLeftBetween", () => {
+				opponent_socket.emit("gameOpponentLeftBetween", () => {
 					console.log("Opponent Player has left the game");
 				});
 				//Make winner to the opponent of player who left
