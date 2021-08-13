@@ -2,7 +2,7 @@ import chalk from "chalk";
 import repl from "repl";
 import dotenv from "dotenv";
 dotenv.config();
-const port = process.env.port || 5000;
+const port = process.env.PORT || 5000;
 const socket = require("socket.io-client")(`http://localhost:${port}`);
 
 let latest_player = null;
